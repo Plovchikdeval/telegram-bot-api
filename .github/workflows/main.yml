@@ -5,6 +5,21 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'Release'
+        type: choice
+        options:
+        - Release
+        - Debug
+      upload_artifact:
+        description: 'Upload binary as artifact?'
+        required: true
+        default: 'true'
+        type: boolean
 
 jobs:
   build:
@@ -28,10 +43,11 @@ jobs:
         mkdir build
         cd build
         CXXFLAGS="-stdlib=libc++" CC=clang-14 CXX=clang++-14 \
-          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=../install ..
+          cmake -DCMAKE_BUILD_TYPE=${{ github.event.inputs.build_type || 'Release' }} -DCMAKE_INSTALL_PREFIX:PATH=../install ..
         cmake --build . --target install
         
     - name: Archive binary
+      if: ${{ github.event.inputs.upload_artifact != 'false' }}
       uses: actions/upload-artifact@v3
       with:
         name: telegram-bot-api
