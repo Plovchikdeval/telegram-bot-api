@@ -2,9 +2,9 @@ name: Build Telegram Bot API
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
   workflow_dispatch:
     inputs:
       build_type:
@@ -27,7 +27,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         submodules: recursive
         
@@ -48,7 +48,7 @@ jobs:
         
     - name: Archive binary
       if: ${{ github.event.inputs.upload_artifact != 'false' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: telegram-bot-api
         path: install/bin/telegram-bot-api
